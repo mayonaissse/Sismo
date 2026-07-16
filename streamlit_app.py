@@ -765,7 +765,7 @@ def main():
         except ImportError:
             st.info("Instala `folium` y `streamlit-folium` para ver el mapa interactivo")
             # Mapa estático con Plotly
-            fig_map = go.Figure(go.Scattermapbox(
+            fig_map = go.Figure(go.Scattermap(
                 lat=[event['latitude']], lon=[event['longitude']],
                 mode='markers', marker=dict(size=20, color='red'),
                 text=[f"M{event['magnitude']:.1f} - {event['place']}"]
