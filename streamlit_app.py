@@ -424,6 +424,12 @@ def main():
     st.markdown('<h1 class="main-header">🌍 Análisis Sismológico 3D</h1>', unsafe_allow_html=True)
     st.markdown('<p style="text-align:center; color:#666;">Búsqueda USGS • Mecanismo Focal • Propagación de Ondas • Animación 3D</p>', unsafe_allow_html=True)
     
+    # Initialize session state for animation
+    if 'anim_frame' not in st.session_state:
+        st.session_state.anim_frame = 0
+    if 'anim_playing' not in st.session_state:
+        st.session_state.anim_playing = False
+    
     # Sidebar - Configuración
     with st.sidebar:
         st.markdown("## ⚙️ Configuración de Búsqueda")
@@ -646,22 +652,40 @@ def main():
         # Propagación de ondas 2D
         st.markdown("### 🌊 Propagación de Ondas (Corte Transversal)")
         
-        # Control de tiempo para animación
-        time_slider = st.slider(
-            "Tiempo (s)", 0.0, float(anim_duration), 0.0, 1.0,
-            key="time_slider"
-        )
+        # Animation controls
+        col1, col2, col3 = st.columns([3, 1, 1])
+        with col1:
+            time_slider = st.slider(
+                "Tiempo (s)", 0.0, float(anim_duration), st.session_state.anim_frame / anim_fps, 1.0 / anim_fps,
+                key="time_slider"
+            )
+            # Update session state from slider
+            st.session_state.anim_frame = int(time_slider * anim_fps)
+        with col2:
+            if st.button("▶️ Play", disabled=st.session_state.anim_playing):
+                st.session_state.anim_playing = True
+                st.rerun()
+        with col3:
+            if st.button("⏸️ Stop", disabled=not st.session_state.anim_playing):
+                st.session_state.anim_playing = False
+                st.rerun()
         
-        if st.button("▶️ Reproducir Animación"):
-            # Placeholder para animación
-            progress = st.progress(0)
-            for i in range(int(anim_duration * anim_fps)):
-                t = i / anim_fps
-                progress.progress((i + 1) / (anim_duration * anim_fps))
+        # Auto-advance animation
+        if st.session_state.anim_playing:
+            next_frame = st.session_state.anim_frame + 1
+            if next_frame <= int(anim_duration * anim_fps):
+                st.session_state.anim_frame = next_frame
                 time.sleep(1/anim_fps)
-            progress.empty()
+                st.rerun()
+            else:
+                st.session_state.anim_playing = False
+                st.rerun()
         
-        fig_waves = plot_wave_propagation_2d(event, fm, time_slider)
+        # Show current time
+        current_time = st.session_state.anim_frame / anim_fps
+        st.caption(f"Tiempo actual: {current_time:.1f}s / {anim_duration:.0f}s")
+        
+        fig_waves = plot_wave_propagation_2d(event, fm, current_time)
         st.plotly_chart(fig_waves, use_container_width=True)
         
         # Mapa de ubicación
