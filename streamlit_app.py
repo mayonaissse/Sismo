@@ -302,7 +302,7 @@ def plot_fault_3d(vertices, faces, strike_vec, dip_vec, normal, slip, event_data
         x=vertices[:, 0], y=vertices[:, 1], z=vertices[:, 2],
         i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
         color='brown', opacity=0.6, name='Plano de Falla',
-        showscale=False
+        showscale=False, showlegend=True, legendgroup='fault'
     ))
     
     # Centroide
@@ -324,7 +324,7 @@ def plot_fault_3d(vertices, faces, strike_vec, dip_vec, normal, slip, event_data
             x=[centroid[0], end[0]], y=[centroid[1], end[1]], z=[centroid[2], end[2]],
             mode='lines+markers', line=dict(color=color, width=6),
             marker=dict(size=[0, 8], color=color),
-            name=name, showlegend=True
+            name=name, showlegend=True, legendgroup='vectors'
         ))
     
     # Epicentro
@@ -332,7 +332,7 @@ def plot_fault_3d(vertices, faces, strike_vec, dip_vec, normal, slip, event_data
         x=[0], y=[0], z=[0],
         mode='markers+text', marker=dict(size=12, color='yellow', symbol='diamond'),
         text=['Epicentro'], textposition='top center',
-        name='Epicentro'
+        name='Epicentro', showlegend=True, legendgroup='source'
     ))
     
     # Hipocentro
@@ -340,20 +340,57 @@ def plot_fault_3d(vertices, faces, strike_vec, dip_vec, normal, slip, event_data
         x=[0], y=[0], z=[-event_data.get('depth', 10)],
         mode='markers+text', marker=dict(size=12, color='red', symbol='diamond'),
         text=[f"Hipocentro ({event_data.get('depth', 10):.1f} km)"],
-        textposition='top center', name='Hipocentro'
+        textposition='top center', name='Hipocentro', showlegend=True, legendgroup='source'
     ))
     
+    # Calculate bounds for proper centering
+    all_x = np.concatenate([vertices[:, 0], [0, 0]])
+    all_y = np.concatenate([vertices[:, 1], [0, 0]])
+    all_z = np.concatenate([vertices[:, 2], [0, -event_data.get('depth', 10)]])
+    
+    # Add vector endpoints
+    for vec in [strike_vec, dip_vec, normal, slip]:
+        all_x = np.concatenate([all_x, [centroid[0] + vec[0] * scale]])
+        all_y = np.concatenate([all_y, [centroid[1] + vec[1] * scale]])
+        all_z = np.concatenate([all_z, [centroid[2] + vec[2] * scale]])
+    
+    x_range = [np.min(all_x), np.max(all_x)]
+    y_range = [np.min(all_y), np.max(all_y)]
+    z_range = [np.min(all_z), np.max(all_z)]
+    
+    # Center ranges
+    x_center = (x_range[0] + x_range[1]) / 2
+    y_center = (y_range[0] + y_range[1]) / 2
+    z_center = (z_range[0] + z_range[1]) / 2
+    max_range = max(x_range[1] - x_range[0], y_range[1] - y_range[0], z_range[1] - z_range[0]) / 2
+    
     fig.update_layout(
-        title=f"Mecanismo Focal 3D - M{event_data.get('magnitude', 0):.1f} "
-              f"Strike={strike_vec[0]:.0f}° Dip={dip_vec[0]:.0f}° Rake={slip[0]:.0f}°",
+        title=dict(
+            text=f"Mecanismo Focal 3D - M{event_data.get('magnitude', 0):.1f} | "
+                 f"Strike={strike_vec[0]:.0f}° Dip={dip_vec[0]:.0f}° Rake={slip[0]:.0f}°",
+            x=0.5, xanchor='center'
+        ),
         scene=dict(
             xaxis_title='Este (km)', yaxis_title='Norte (km)', zaxis_title='Profundidad (km)',
-            aspectmode='data', camera=dict(eye=dict(x=1.5, y=1.5, z=1.2))
+            xaxis=dict(range=[x_center - max_range, x_center + max_range]),
+            yaxis=dict(range=[y_center - max_range, y_center + max_range]),
+            zaxis=dict(range=[z_center - max_range, z_center + max_range], autorange='reversed'),
+            aspectmode='cube',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2))
         ),
-        width=800, height=700, showlegend=True
+        width=None, height=700, 
+        showlegend=True,
+        legend=dict(
+            x=1.02, y=0.98,
+            xanchor='left', yanchor='top',
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='rgba(0,0,0,0.2)',
+            borderwidth=1,
+            font=dict(size=11)
+        ),
+        margin=dict(l=0, r=180, t=60, b=0)
     )
     
-    fig.update_scenes(zaxis_autorange="reversed")
     return fig
 
 
@@ -652,7 +689,7 @@ def main():
         # Propagación de ondas 2D
         st.markdown("### 🌊 Propagación de Ondas (Corte Transversal)")
         
-        # Animation controls
+        # Animation controls with status
         col1, col2, col3 = st.columns([3, 1, 1])
         with col1:
             time_slider = st.slider(
@@ -662,13 +699,21 @@ def main():
             # Update session state from slider
             st.session_state.anim_frame = int(time_slider * anim_fps)
         with col2:
-            if st.button("▶️ Play", disabled=st.session_state.anim_playing):
+            play_disabled = st.session_state.anim_playing
+            if st.button("▶️ Play", disabled=play_disabled, use_container_width=True):
                 st.session_state.anim_playing = True
                 st.rerun()
         with col3:
-            if st.button("⏸️ Stop", disabled=not st.session_state.anim_playing):
+            stop_disabled = not st.session_state.anim_playing
+            if st.button("⏸️ Stop", disabled=stop_disabled, use_container_width=True):
                 st.session_state.anim_playing = False
                 st.rerun()
+        
+        # Status indicator
+        if st.session_state.anim_playing:
+            st.info(f"▶️ Reproduciendo... frame {st.session_state.anim_frame}/{int(anim_duration * anim_fps)}")
+        else:
+            st.caption(f"⏸️ Pausado en {st.session_state.anim_frame / anim_fps:.1f}s")
         
         # Auto-advance animation
         if st.session_state.anim_playing:
@@ -683,7 +728,6 @@ def main():
         
         # Show current time
         current_time = st.session_state.anim_frame / anim_fps
-        st.caption(f"Tiempo actual: {current_time:.1f}s / {anim_duration:.0f}s")
         
         fig_waves = plot_wave_propagation_2d(event, fm, current_time)
         st.plotly_chart(fig_waves, use_container_width=True)
