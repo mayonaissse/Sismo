@@ -399,7 +399,7 @@ def plot_wave_propagation_2d(event_data, fm_data, time_step=0):
     for col in [1, 2]:
         fig.add_trace(go.Scatter(
             x=[0], y=[-event_data.get('depth', 10)],
-            mode='markers', marker=dict(size=15, color='red', symbol='star'),
+            mode='markers', marker=dict(size=15, color='red', symbol='diamond'),
             showlegend=False
         ), row=1, col=col)
     
