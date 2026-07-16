@@ -329,7 +329,7 @@ def plot_fault_3d(vertices, faces, strike_vec, dip_vec, normal, slip, event_data
     # Epicentro
     fig.add_trace(go.Scatter3d(
         x=[0], y=[0], z=[0],
-        mode='markers+text', marker=dict(size=12, color='yellow', symbol='star'),
+        mode='markers+text', marker=dict(size=12, color='yellow', symbol='diamond'),
         text=['Epicentro'], textposition='top center',
         name='Epicentro'
     ))
@@ -337,7 +337,7 @@ def plot_fault_3d(vertices, faces, strike_vec, dip_vec, normal, slip, event_data
     # Hipocentro
     fig.add_trace(go.Scatter3d(
         x=[0], y=[0], z=[-event_data.get('depth', 10)],
-        mode='markers+text', marker=dict(size=12, color='red', symbol='star'),
+        mode='markers+text', marker=dict(size=12, color='red', symbol='diamond'),
         text=[f"Hipocentro ({event_data.get('depth', 10):.1f} km)"],
         textposition='top center', name='Hipocentro'
     ))
