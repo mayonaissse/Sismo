@@ -1,0 +1,35 @@
+# Seismic 3D Analysis - Minimal Requirements for Termux/Android
+# ==============================================================
+# Instalación en Termux:
+#   pkg install python python-pip libffi openssl libxml2 libxslt clang make
+#   pip install -r requirements-termux.txt
+
+# Core científico (versiones compatibles con Termux)
+numpy>=1.23.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+pandas>=2.0.0
+
+# HTTP
+requests>=2.31.0
+
+# ObsPy - puede requerir compilación en Termux
+# Si falla, intenta: pip install --no-deps obspy
+# O usa la versión del sistema: pkg install python-obspy
+obspy>=1.4.0
+
+# Utilidades
+python-dateutil>=2.8.0
+pytz>=2023.3
+tqdm>=4.65.0
+pyyaml>=6.0
+
+# Visualización 3D - Opciones:
+# 1. Matplotlib (incluido arriba, funciona nativo en Termux)
+# 2. Plotly (requiere kaleido para export estático)
+plotly>=5.15.0
+kaleido>=0.2.1
+
+# NOTA: PyVista/VTK NO está disponible fácilmente en Termux
+# Para animaciones 3D completas, usar entorno Linux estándar
+# o generar frames con Matplotlib y compilar con ffmpeg

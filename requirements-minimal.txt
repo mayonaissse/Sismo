@@ -1,0 +1,31 @@
+# Seismic 3D Analysis - Requirements Mínimos (Termux/Android)
+# ============================================================
+# Para entornos con recursos limitados (Termux en Android)
+# Omite ObsPy y PyVista que requieren compilación nativa
+
+# Core científico (pure Python wheels disponibles)
+numpy>=1.24.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+pandas>=2.0.0
+
+# HTTP requests
+requests>=2.31.0
+
+# Visualización web interactiva (sin compilación)
+plotly>=5.15.0
+
+# Configuración
+pyyaml>=6.0
+tqdm>=4.65.0
+
+# Opcional: Para formato de video en matplotlib
+# imageio>=2.31.0
+# imageio-ffmpeg>=0.4.8
+
+# NOTA: Sin ObsPy, el módulo FDSN no funcionará.
+# Para usar FDSN en Termux, instala obspy por separado:
+#   pkg install libffi openssl libxml2 libxslt clang make python-numpy
+#   pip install --no-binary=obspy obspy
+
+# NOTA: Sin PyVista, el renderer hará fallback a Plotly/Matplotlib

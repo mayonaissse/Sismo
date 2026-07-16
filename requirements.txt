@@ -1,0 +1,52 @@
+# Seismic 3D Analysis - Requirements
+# ===================================
+# Instalación recomendada:
+#   pip install -r requirements.txt
+#
+# Para Termux/Android:
+#   pkg install python libffi openssl libxml2 libxslt
+#   pip install -r requirements.txt
+#
+# Nota: ObsPy requiere compilación nativa. En Termux puede tardar.
+# Alternativa: usar conda/mamba si está disponible.
+
+# Core scientific stack
+numpy>=1.24.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+pandas>=2.0.0
+
+# ObsPy - Sismología (requiere compilación)
+obspy>=1.4.0
+
+# HTTP requests
+requests>=2.31.0
+
+# Visualización 3D - Opción 1: PyVista (recomendado para animaciones)
+pyvista>=0.43.0
+vtk>=9.2.0
+
+# Visualización 3D - Opción 2: Plotly (interactivo web)
+plotly>=5.15.0
+
+# Visualización 3D - Opción 3: Matplotlib (fallback, solo estático)
+# ya incluido arriba
+
+# Configuración y utilidades
+pyyaml>=6.0
+tqdm>=4.65.0
+
+# Opcional: Para exportar animaciones a video
+# imageio>=2.31.0
+# imageio-ffmpeg>=0.4.8
+
+# Opcional: Para HTML interactivo con PyVista
+# trame>=2.14.0
+# trame-vuetify>=2.14.0
+# trame-vtk>=2.14.0
+
+# Desarrollo y testing
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+# black>=23.0.0
+# flake8>=6.0.0
