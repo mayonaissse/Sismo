@@ -696,8 +696,10 @@ def main():
                 "Tiempo (s)", 0.0, float(anim_duration), st.session_state.anim_frame / anim_fps, 1.0 / anim_fps,
                 key="time_slider"
             )
-            # Update session state from slider
-            st.session_state.anim_frame = int(time_slider * anim_fps)
+            # Update session state from slider (only when manually changed)
+            new_frame = int(time_slider * anim_fps)
+            if new_frame != st.session_state.anim_frame:
+                st.session_state.anim_frame = new_frame
         with col2:
             play_disabled = st.session_state.anim_playing
             if st.button("▶️ Play", disabled=play_disabled, use_container_width=True):
@@ -715,24 +717,17 @@ def main():
         else:
             st.caption(f"⏸️ Pausado en {st.session_state.anim_frame / anim_fps:.1f}s")
         
-        # Auto-advance animation - use a non-blocking approach
-        current_time = st.session_state.anim_frame / anim_fps
-        
-        # Auto-advance animation - simple approach
+        # Auto-advance animation
         if st.session_state.anim_playing:
-            # Only advance if we haven't reached the end
             if st.session_state.anim_frame < int(anim_duration * anim_fps):
-                # Increment frame for next rerun
                 st.session_state.anim_frame += 1
-                # Use a small sleep and rerun for animation
-                # Use a very short sleep to avoid blocking
-                time.sleep(0.02)  # Very short sleep
+                time.sleep(0.05)  # Small delay for animation
                 st.rerun()
             else:
                 st.session_state.anim_playing = False
                 st.rerun()
         
-        # Show current time
+        # Current time for plotting
         current_time = st.session_state.anim_frame / anim_fps
         
         fig_waves = plot_wave_propagation_2d(event, fm, current_time)
