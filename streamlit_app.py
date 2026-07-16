@@ -719,6 +719,7 @@ def main():
         
         # Auto-advance animation - NO time.sleep() which blocks Streamlit Cloud
         if st.session_state.anim_playing:
+            st.write(f"🎬 ANIM DEBUG: playing=True, frame={st.session_state.anim_frame}/{int(anim_duration * anim_fps)}")
             if st.session_state.anim_frame < int(anim_duration * anim_fps):
                 st.session_state.anim_frame += 1
                 st.rerun()  # Immediate rerun - NO time.sleep()
@@ -728,6 +729,7 @@ def main():
         
         # Current time for plotting
         current_time = st.session_state.anim_frame / anim_fps
+        st.write(f"🎬 ANIM DEBUG: plotting time={current_time:.2f}s, frame={st.session_state.anim_frame}, playing={st.session_state.anim_playing}")
         
         fig_waves = plot_wave_propagation_2d(event, fm, current_time)
         st.plotly_chart(fig_waves, use_container_width=True)
