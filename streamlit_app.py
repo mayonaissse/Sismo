@@ -715,12 +715,18 @@ def main():
         else:
             st.caption(f"⏸️ Pausado en {st.session_state.anim_frame / anim_fps:.1f}s")
         
-        # Auto-advance animation
+        # Auto-advance animation - use a non-blocking approach
+        current_time = st.session_state.anim_frame / anim_fps
+        
+        # Auto-advance animation - simple approach
         if st.session_state.anim_playing:
-            next_frame = st.session_state.anim_frame + 1
-            if next_frame <= int(anim_duration * anim_fps):
-                st.session_state.anim_frame = next_frame
-                time.sleep(1/anim_fps)
+            # Only advance if we haven't reached the end
+            if st.session_state.anim_frame < int(anim_duration * anim_fps):
+                # Increment frame for next rerun
+                st.session_state.anim_frame += 1
+                # Use a small sleep and rerun for animation
+                # Use a very short sleep to avoid blocking
+                time.sleep(0.02)  # Very short sleep
                 st.rerun()
             else:
                 st.session_state.anim_playing = False
