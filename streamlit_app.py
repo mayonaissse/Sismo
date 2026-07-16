@@ -516,7 +516,7 @@ def main():
         anim_fps = st.slider("FPS", 10, 60, 30)
         
         # Botón buscar
-        search_btn = st.button("🔍 Buscar Eventos", type="primary", use_container_width=True)
+        search_btn = st.button("🔍 Buscar Eventos", type="primary", width='stretch')
     
     # Estado de sesión
     if 'events_df' not in st.session_state:
@@ -582,10 +582,10 @@ def main():
             
             st.rerun()
         
-        # Tabla interactiva
+        # Dataframe interactivo
         st.dataframe(
             display_df[['time', 'magnitude', 'mag_type', 'depth', 'latitude', 'longitude', 'place']],
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
             column_config={
                 "time": "Tiempo (UTC)",
@@ -684,7 +684,7 @@ def main():
         )
         
         fig_3d = plot_fault_3d(vertices, faces, strike_vec, dip_vec, normal, slip, event)
-        st.plotly_chart(fig_3d, use_container_width=True)
+        st.plotly_chart(fig_3d, width='stretch')
         
         # Propagación de ondas 2D
         st.markdown("### 🌊 Propagación de Ondas (Corte Transversal)")
@@ -702,12 +702,12 @@ def main():
                 st.session_state.anim_frame = new_frame
         with col2:
             play_disabled = st.session_state.anim_playing
-            if st.button("▶️ Play", disabled=play_disabled, use_container_width=True):
+            if st.button("▶️ Play", disabled=play_disabled, width='stretch'):
                 st.session_state.anim_playing = True
                 st.rerun()
         with col3:
             stop_disabled = not st.session_state.anim_playing
-            if st.button("⏸️ Stop", disabled=stop_disabled, use_container_width=True):
+            if st.button("⏸️ Stop", disabled=stop_disabled, width='stretch'):
                 st.session_state.anim_playing = False
                 st.rerun()
         
@@ -732,7 +732,7 @@ def main():
         st.write(f"🎬 ANIM DEBUG: plotting time={current_time:.2f}s, frame={st.session_state.anim_frame}, playing={st.session_state.anim_playing}")
         
         fig_waves = plot_wave_propagation_2d(event, fm, current_time)
-        st.plotly_chart(fig_waves, use_container_width=True)
+        st.plotly_chart(fig_waves, width='stretch')
         
         # Mapa de ubicación
         st.markdown("### 🗺️ Mapa de Ubicación")
@@ -775,7 +775,7 @@ def main():
                 mapbox=dict(center=dict(lat=event['latitude'], lon=event['longitude']), zoom=5),
                 height=400, margin=dict(l=0, r=0, t=0, b=0)
             )
-            st.plotly_chart(fig_map, use_container_width=True)
+            st.plotly_chart(fig_map, width='stretch')
         
         # Exportar datos
         st.divider()
