@@ -713,6 +713,9 @@ def main():
                 st.write("🎬 BUTTON DEBUG: Stop button clicked, setting anim_playing=False")
                 st.rerun()
         
+        # DEBUG: Show session state at start
+        st.write(f"🎬 START DEBUG: frame={st.session_state.anim_frame}, playing={st.session_state.anim_playing}, fps={anim_fps}, duration={anim_duration}")
+        
         # Status indicator
         if st.session_state.anim_playing:
             st.info(f"▶️ Reproduciendo... frame {st.session_state.anim_frame}/{int(anim_duration * anim_fps)}")
