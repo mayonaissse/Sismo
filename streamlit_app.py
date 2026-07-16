@@ -711,31 +711,23 @@ def main():
                 st.session_state.anim_playing = False
                 st.rerun()
         
-        # DEBUG: Show session state
-        st.write(f"🔍 DEBUG: anim_frame={st.session_state.anim_frame}, anim_playing={st.session_state.anim_playing}, anim_fps={anim_fps}, anim_duration={anim_duration}")
-        st.write(f"🔍 DEBUG: max_frames={int(anim_duration * anim_fps)}, slider_value={time_slider}, new_frame={int(time_slider * anim_fps)}")
-        
         # Status indicator
         if st.session_state.anim_playing:
             st.info(f"▶️ Reproduciendo... frame {st.session_state.anim_frame}/{int(anim_duration * anim_fps)}")
         else:
             st.caption(f"⏸️ Pausado en {st.session_state.anim_frame / anim_fps:.1f}s")
         
-        # Auto-advance animation
+        # Auto-advance animation - NO time.sleep() which blocks Streamlit Cloud
         if st.session_state.anim_playing:
-            st.write(f"🔍 DEBUG: Inside anim_playing block, current frame={st.session_state.anim_frame}")
             if st.session_state.anim_frame < int(anim_duration * anim_fps):
                 st.session_state.anim_frame += 1
-                st.write(f"🔍 DEBUG: Incremented frame to {st.session_state.anim_frame}, sleeping...")
-                time.sleep(0.05)  # Small delay for animation
-                st.rerun()
+                st.rerun()  # Immediate rerun - NO time.sleep()
             else:
                 st.session_state.anim_playing = False
                 st.rerun()
         
         # Current time for plotting
         current_time = st.session_state.anim_frame / anim_fps
-        st.write(f"🔍 DEBUG: Plotting at time={current_time:.1f}s")
         
         fig_waves = plot_wave_propagation_2d(event, fm, current_time)
         st.plotly_chart(fig_waves, use_container_width=True)
