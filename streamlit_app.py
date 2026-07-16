@@ -704,11 +704,13 @@ def main():
             play_disabled = st.session_state.anim_playing
             if st.button("▶️ Play", disabled=play_disabled, width='stretch'):
                 st.session_state.anim_playing = True
+                st.write("🎬 BUTTON DEBUG: Play button clicked, setting anim_playing=True")
                 st.rerun()
         with col3:
             stop_disabled = not st.session_state.anim_playing
             if st.button("⏸️ Stop", disabled=stop_disabled, width='stretch'):
                 st.session_state.anim_playing = False
+                st.write("🎬 BUTTON DEBUG: Stop button clicked, setting anim_playing=False")
                 st.rerun()
         
         # Status indicator
@@ -717,14 +719,19 @@ def main():
         else:
             st.caption(f"⏸️ Pausado en {st.session_state.anim_frame / anim_fps:.1f}s")
         
+        # DEBUG: Show session state
+        st.write(f"🎬 STATE DEBUG: anim_frame={st.session_state.anim_frame}, anim_playing={st.session_state.anim_playing}, anim_fps={anim_fps}, anim_duration={anim_duration}")
+        
         # Auto-advance animation - NO time.sleep() which blocks Streamlit Cloud
         if st.session_state.anim_playing:
             st.write(f"🎬 ANIM DEBUG: playing=True, frame={st.session_state.anim_frame}/{int(anim_duration * anim_fps)}")
             if st.session_state.anim_frame < int(anim_duration * anim_fps):
                 st.session_state.anim_frame += 1
+                st.write(f"🎬 ANIM DEBUG: Incremented frame to {st.session_state.anim_frame}, calling rerun...")
                 st.rerun()  # Immediate rerun - NO time.sleep()
             else:
                 st.session_state.anim_playing = False
+                st.write("🎬 ANIM DEBUG: Reached end, stopping")
                 st.rerun()
         
         # Current time for plotting
